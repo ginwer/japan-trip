@@ -19,11 +19,118 @@ main{padding:28px 0 70px}.overview{display:grid;grid-template-columns:repeat(3,1
 a{color:var(--green)}@media(max-width:620px){.overview{grid-template-columns:1fr 1fr}.event{grid-template-columns:78px 1fr;gap:8px}.day-body{padding-left:15px;padding-right:15px}.checklist{grid-template-columns:1fr}.hero{padding-top:40px}}
 @media print{body{background:white}.hero{padding:25px}.btn{display:none}.day{break-inside:avoid}.panel,.stat{box-shadow:none}}
 </style>
+
+<style id="autumn-theme">
+:root{--ink:#392b25;--muted:#88776a;--paper:#f6efe5;--card:#fffaf2;--green:#526747;--lime:#e8eadb;--orange:#c56b3d;--line:#eadbca}
+body{background:radial-gradient(ellipse at 10% 8%,#f4dfc7 0,transparent 30%),linear-gradient(180deg,#f7efe4,#f4eee7 45%,#f8f3eb);color:var(--ink)}
+.hero{background:linear-gradient(130deg,#56372d 0%,#875039 48%,#65704b 100%);padding:62px 22px 48px}
+.hero:before{content:"🍁　🍂　🍁";position:absolute;right:7%;bottom:16px;font-size:clamp(22px,4vw,38px);opacity:.8;letter-spacing:8px}
+.hero:after{border-color:#f9e7d533;box-shadow:0 0 0 35px #f9e7d50b,0 0 0 75px #f9e7d508}
+.eyebrow{color:#f2d8bc}.hero h1{font-family:Georgia,"Noto Serif TC",serif;letter-spacing:.04em}
+.hero p{color:#f3e5d8}.pill{border-color:#f8e8d877;background:#ffffff0c}
+.stat,.panel,.day,.map-card,.spot-card,.weather-box{background:rgba(255,251,245,.94);border-color:#eadbca;box-shadow:0 8px 24px #69452a0b}
+.stat b{color:#7a4b35}.day{border-radius:20px;box-shadow:0 7px 22px #69452a0b}
+.day-head{background:linear-gradient(100deg,#f1e4d4,#eff0e3);border-color:#e7d8c7}
+.day-num{background:linear-gradient(145deg,#98583b,#64734f);box-shadow:0 4px 10px #69452a24}
+.time{color:#b7653b}.tag{background:#f4e7d8;color:#8a5338}
+.hotel{background:#f8eee1;border-left-color:#c77948;color:#685044}.hotel b{color:#985c39}
+.btn,.itin-btn{background:#fff9f0;border-color:#e5d2bd;color:#805239}
+.btn:hover,.itin-btn:hover{background:#f2e3d1}.itin-btn.danger{background:#fff6f0;color:#a44f3d}
+.itin-btn.has-ticket{background:#e9eddf;border-color:#cbd4bd;color:#526747}
+.note{background:#fbf0df;border-color:#ead4b5;color:#78563c}
+.progress{background:#eee2d5}.progress div{background:linear-gradient(90deg,#bd7046,#64734f)}
+.map-card iframe{border:1px solid #eadbca}.spot-card img{filter:saturate(.86) sepia(.08)}
+.extra-title{font-family:Georgia,"Noto Serif TC",serif;color:#684632}
+.weather-points div{background:#f1eadf}.foot{color:#987f6a}
+#editDialog{background:#fffaf2}.edit-inner{background:#fffaf2;color:#392b25}
+.edit-inner input,.edit-inner textarea{border-color:#e5d6c5;background:#fffdf9}
+.edit-actions button{border-color:#e5d2bd;background:#f7eee3;color:#805239}
+.edit-actions button.primary{background:#526747;color:#fff}
+.travel-modal-card{background:#fffaf2;color:#392b25}
+.travel-modal-head button{background:#fff7ed;border-color:#eadbca}
+@media(max-width:620px){.hero{padding-top:46px}.hero:before{right:4%;bottom:8px}}
+@media print{.hero:before{display:none}}
+</style>
+
+<style id="mobile-comfort-layout">
+/* Mobile-first refinements */
+.add-event-wrap{padding:8px 0 2px}
+.add-event-wrap .itin-btn{
+  width:auto;height:auto;min-height:32px;padding:6px 11px;
+  display:inline-flex;align-items:center;justify-content:center;
+  gap:5px;font-size:12px;font-weight:600;border-radius:999px;
+  background:#f7eee2;color:#8a593c;border:1px dashed #d9b99a;
+}
+.day-head{gap:11px;padding:15px 16px}
+.day-num{flex:0 0 42px;width:42px;height:42px;font-size:13px}
+.day-head h3{font-size:17px;line-height:1.35}
+.day-head small{font-size:11px}
+.day-body{padding:7px 16px 15px}
+.event{grid-template-columns:78px minmax(0,1fr);gap:10px;padding:13px 0}
+.event h4{font-size:15px;line-height:1.4}
+.event p{font-size:12px;line-height:1.55}
+.time{font-size:12px;line-height:1.5}
+.itin-tools{gap:7px;margin-top:9px}
+.itin-btn{width:36px;height:36px;font-size:16px;border-radius:10px}
+.hotel{font-size:12px;line-height:1.6;padding:10px 12px}
+.tag{font-size:10px}
+@media(max-width:600px){
+ .wrap{padding-left:14px;padding-right:14px}
+ .hero{padding:38px 18px 34px}
+ .hero h1{font-size:30px;line-height:1.22}
+ .hero p{font-size:13px;max-width:88%}
+ .hero-meta{gap:7px;margin-top:17px}
+ .pill{font-size:11px;padding:5px 10px}
+ main{padding:18px 0 42px}
+ .overview{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:20px}
+ .stat{padding:11px 9px;border-radius:13px}
+ .stat b{font-size:16px;line-height:1.3}
+ .stat span{font-size:10px;line-height:1.3;display:block;margin-top:3px}
+ .toolbar{margin:20px 0 11px;align-items:center}
+ .toolbar h2{font-size:19px}
+ .toolbar .btn{font-size:11px;padding:7px 10px}
+ .day{margin:11px 0;border-radius:15px}
+ .day-head{padding:12px 12px;gap:9px}
+ .day-num{width:38px;height:38px;flex-basis:38px;border-radius:12px;font-size:11px}
+ .day-head h3{font-size:15px}
+ .day-head small{font-size:10px}
+ .day-body{padding:5px 12px 12px}
+ .event{grid-template-columns:66px minmax(0,1fr);gap:8px;padding:12px 0}
+ .event h4{font-size:14px;margin-bottom:3px}
+ .event p{font-size:11px;line-height:1.55}
+ .time{font-size:11px}
+ .itin-tools{gap:6px;margin-top:8px}
+ .itin-btn{width:34px;height:34px;font-size:15px;border-radius:9px}
+ .add-event-wrap .itin-btn{min-height:29px;padding:5px 10px;font-size:11px}
+ .hotel{font-size:11px;margin-top:9px}
+ .tag{font-size:9px;padding:2px 6px;margin:5px 4px 0 0}
+ .extra-section{margin:20px 0}
+ .extra-title{font-size:19px}
+ .map-card,.weather-box,.panel{padding:13px;border-radius:14px}
+ .map-card iframe{height:190px}
+ .spot-card img{height:145px}
+ .checklist{gap:9px}
+ .check{font-size:12px}
+ .note{font-size:11px;padding:12px}
+ .travel-modal{padding:8px}
+ .travel-modal-card{padding:12px;border-radius:14px}
+ #eventMapFrame{height:58vh}
+ #ticketPdfFrame{height:65vh}
+}
+@media(max-width:370px){
+ .overview{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .stat{padding:9px 6px}
+ .stat b{font-size:14px}
+ .event{grid-template-columns:58px minmax(0,1fr);gap:7px}
+ .itin-tools{gap:5px}
+ .itin-btn{width:32px;height:32px}
+}
+</style>
 </head>
 <body>
 <header class="hero"><div class="wrap">
 <div class="eyebrow">JAPAN TRAVEL JOURNAL · AUTUMN 2026</div>
-<h1>日本中部・四日市<br>旅行手帳</h1>
+<h1>🍁 日本中部・四日市<br>秋日旅行手帳 🍂</h1>
 <p>從中部國際機場出發，走訪四日市、高山與白川鄉。</p>
 <div class="hero-meta"><span class="pill">2026.11.18 – 11.25</span><span class="pill">8 天 7 夜</span><span class="pill">愛知・三重・岐阜</span></div>
 </div></header>
@@ -31,7 +138,7 @@ a{color:var(--green)}@media(max-width:620px){.overview{grid-template-columns:1fr
 <section class="overview">
 <div class="stat"><b>8 天</b><span>旅行期間</span></div><div class="stat"><b>3 個區域</b><span>四日市・高山・名古屋</span></div><div class="stat"><b>¥14,000</b><span>已註記巴士票價合計</span></div>
 </section>
-<div class="toolbar"><h2>每日行程 Itinerary</h2><button class="btn" onclick="window.print()">列印 / 存成 PDF</button></div>
+<div class="toolbar"><h2>🍂 每日行程 Itinerary</h2><button class="btn" onclick="window.print()">列印 / 存成 PDF</button></div>
 
 <article class="day"><div class="day-head"><div class="day-num">01</div><div><h3>11/18（三）｜抵達日本</h3><small>中部國際機場・Centrair</small></div></div><div class="day-body">
 <div class="event"><div class="time">10:00</div><div><h4>機場 Check-in</h4><p>景文｜出發前往日本</p></div></div>
@@ -72,7 +179,7 @@ a{color:var(--green)}@media(max-width:620px){.overview{grid-template-columns:1fr
 <div class="note"><b>行程核對提醒</b><br>
 原始 Excel 中 11/24 的日期顯示為「2025/11/24」，但前後行程為 2026 年，這份手帳先依序整理為 2026/11/24。另 11/23 的 20:30 機場 Check-in 與 11/25 的返程航班時間可能需要再確認；目前先保留原始資料，不自行更動。
 </div>
-<section class="panel"><h3>出發前準備清單</h3><div class="progress"><div id="bar"></div></div><small id="count" style="color:#718078">已完成 0 / 8 項</small>
+<section class="panel"><h3>🎒 出發前準備清單</h3><div class="progress"><div id="bar"></div></div><small id="count" style="color:#718078">已完成 0 / 8 項</small>
 <div class="checklist" id="checks">
 <label class="check"><input type="checkbox">護照與機票確認</label>
 <label class="check"><input type="checkbox">住宿訂單與地址備份</label>
@@ -99,7 +206,7 @@ a{color:var(--green)}@media(max-width:620px){.overview{grid-template-columns:1fr
 @media(max-width:650px){.map-grid,.spot-grid{grid-template-columns:1fr}.expense-form{grid-template-columns:1fr 1fr}.expense-form button{grid-column:span 2}.weather-points{grid-template-columns:1fr}}
 </style>
 <section class="extra-section">
-  <h2 class="extra-title">景點地圖與交通</h2>
+  <h2 class="extra-title">🗺️ 景點地圖與交通</h2>
   <p style="font-size:13px;color:#718078;margin-top:-5px">點開地圖可查看位置；導航連結會交由 Google Maps 開啟。巴士班次以已購票資訊及營運方公告為準。</p>
   <div class="map-grid">
     <div class="map-card"><h3>中部國際機場・Centrair</h3><p>抵達與返程交通樞紐</p><iframe loading="lazy" src="https://www.google.com/maps?q=Chubu+Centrair+International+Airport&output=embed"></iframe><div class="map-links"><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Centrair+Hotel">飯店位置</a><a target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=Chubu+Centrair+International+Airport&destination=Yokkaichi+Station&travelmode=transit">前往四日市</a></div></div>
@@ -111,7 +218,7 @@ a{color:var(--green)}@media(max-width:620px){.overview{grid-template-columns:1fr
 </section>
 
 <section class="extra-section">
-  <h2 class="extra-title">沿途景點照片</h2>
+  <h2 class="extra-title">📸 沿途風景收藏</h2>
   <div class="spot-grid">
     <article class="spot-card"><img loading="lazy" src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=900&q=80" alt="日本傳統街道景色"><div class="spot-copy"><h3>高山老街風情</h3><p>木造町家、傳統商店與在地小吃。建議安排朝市後接續散步。</p><a class="source-link" target="_blank" href="https://www.japan.travel/tw/spot/ma_114/">日本觀光局景點介紹</a></div></article>
     <article class="spot-card"><img loading="lazy" src="https://images.unsplash.com/photo-1528360983277-13d401dbc6ee?w=900&q=80" alt="日本傳統建築與山景"><div class="spot-copy"><h3>白川鄉合掌村</h3><p>世界遺產聚落，推薦預留時間走訪村落並登上展望台。</p><a class="source-link" target="_blank" href="https://www.japan.travel/tw/spot/2031/">日本觀光局景點介紹</a></div></article>
@@ -120,7 +227,7 @@ a{color:var(--green)}@media(max-width:620px){.overview{grid-template-columns:1fr
 </section>
 
 <section class="extra-section">
-  <h2 class="extra-title">11 月天氣與穿搭提醒</h2>
+  <h2 class="extra-title">🧣 11 月天氣與穿搭提醒</h2>
   <div class="weather-box">
     <b>目前尚未提供 11/18–11/25 的逐日預報</b>
     <p>距離出發仍有一段時間，現在不適合把天氣當成確定預報。建議出發前 3–5 天再查看名古屋、四日市、高山與白川鄉的預報；山區與市區溫差可能明顯。</p>
@@ -129,21 +236,7 @@ a{color:var(--green)}@media(max-width:620px){.overview{grid-template-columns:1fr
   </div>
 </section>
 
-<section class="extra-section">
-  <h2 class="extra-title">旅費記帳</h2>
-  <div class="expense-box">
-    <div style="font-size:13px;color:#718078">已記錄支出（日圓）</div><div class="expense-total" id="expenseTotal">¥0</div>
-    <div class="expense-form">
-      <input id="expenseName" placeholder="項目，例如：午餐">
-      <select id="expenseType"><option>餐飲</option><option>交通</option><option>住宿</option><option>購物</option><option>門票</option><option>其他</option></select>
-      <input id="expenseAmount" type="number" min="1" placeholder="金額 ¥">
-      <button class="btn" onclick="addExpense()">新增</button>
-    </div>
-    <table class="expense-table"><thead><tr><th>項目</th><th>分類</th><th>金額</th><th></th></tr></thead><tbody id="expenseRows"><tr><td colspan="4" style="color:#718078">尚未新增支出</td></tr></tbody></table>
-    <div class="map-links"><button class="btn" onclick="exportExpenses()">匯出 CSV</button><button class="btn" onclick="clearExpenses()">清空紀錄</button></div>
-    <p style="font-size:11px;color:#718078">記帳資料會保存在目前瀏覽器的本機儲存空間；換裝置或清除瀏覽資料前，請先匯出 CSV 備份。</p>
-  </div>
-</section>
+
 <script>
 let expenses=JSON.parse(localStorage.getItem('jpTripExpenses2026')||'[]');
 function saveExpenses(){localStorage.setItem('jpTripExpenses2026',JSON.stringify(expenses));renderExpenses();}
@@ -167,4 +260,223 @@ const boxes=[...document.querySelectorAll('#checks input')],bar=document.getElem
 function update(){let n=boxes.filter(x=>x.checked).length;bar.style.width=(n/boxes.length*100)+'%';count.textContent=`已完成 ${n} / ${boxes.length} 項`;}
 boxes.forEach(x=>x.addEventListener('change',update));update();
 </script>
+
+<style>
+.itin-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.itin-btn{font:inherit;font-size:17px;line-height:1;border:1px solid #e5d2bd;background:#fff9f0;color:#805239;border-radius:11px;width:38px;height:38px;padding:0;display:inline-grid;place-items:center;cursor:pointer;transition:transform .15s,background .15s}.itin-btn:hover{transform:translateY(-2px);background:#f2e3d1}.itin-btn:focus-visible{outline:3px solid #c56b3d;outline-offset:2px}
+.itin-btn.danger{color:#a44f3d;border-color:#ecd7d1;background:#fff9f7}
+.add-event-wrap{padding-top:12px}
+#editDialog{border:0;border-radius:18px;padding:0;width:min(520px,calc(100% - 28px));box-shadow:0 20px 70px #14251e40}
+#editDialog::backdrop{background:#10251fcc}
+.edit-inner{padding:22px;background:#fffefa;color:#20332e}
+.edit-inner h3{margin:0 0 15px}.edit-inner label{display:block;font-size:13px;font-weight:650;margin:12px 0 5px}
+.edit-inner input,.edit-inner textarea{width:100%;border:1px solid #dcd9d0;border-radius:9px;padding:10px;font:inherit;background:white}
+.edit-inner textarea{min-height:90px;resize:vertical}
+.edit-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:17px}
+.edit-actions button{border:1px solid #d8e2d7;border-radius:9px;padding:9px 14px;background:#f4f7f1;color:#24594d;font:inherit;cursor:pointer}
+.edit-actions button.primary{background:#24594d;color:white}
+.edit-hint{font-size:11px;color:#718078;margin-top:12px}
+@media print{.itin-tools,.add-event-wrap,#editDialog{display:none!important}}
+</style>
+<div style="display:flex;justify-content:flex-end;margin:0 0 12px;gap:8px;flex-wrap:wrap">
+ <button class="btn" id="resetItinerary">還原原始行程</button>
+ <span style="font-size:12px;color:#718078;align-self:center">行程可直接編輯，修改會自動保存在這台裝置的瀏覽器</span>
+</div>
+<dialog id="editDialog">
+ <form class="edit-inner" id="editForm">
+  <h3 id="editHeading">編輯行程</h3>
+  <label for="editTime">時間</label><input id="editTime" maxlength="80" placeholder="例如：09:30">
+  <label for="editTitle">行程名稱</label><input id="editTitle" maxlength="120" required>
+  <label for="editDesc">備註／行程說明</label><textarea id="editDesc" maxlength="1200" placeholder="輸入地點、交通方式、提醒事項等"></textarea>
+  <div class="edit-actions"><button type="button" id="cancelEdit">取消</button><button class="primary" type="submit">儲存行程</button></div>
+  <div class="edit-hint">儲存後只會更新目前瀏覽器中的個人行程，不會自動修改 GitHub 上的公開網頁。</div>
+ </form>
+</dialog>
+<script>
+(()=>{
+ const STORE='jpTripEditableItinerary_v1';
+ const days=[...document.querySelectorAll('article.day')];
+ const dialog=document.getElementById('editDialog'),form=document.getElementById('editForm');
+ let target=null;
+ const clean=(v)=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ function readDays(){
+  return days.map(day=>({
+   header:day.querySelector('.day-head')?.innerHTML||'',
+   body:day.querySelector('.day-body')?.innerHTML||''
+  }));
+ }
+ function save(){localStorage.setItem(STORE,JSON.stringify(readDays()));}
+ function restore(){
+  try{
+   const data=JSON.parse(localStorage.getItem(STORE)||'null');
+   if(Array.isArray(data)&&data.length===days.length)data.forEach((d,i)=>{
+    const h=days[i].querySelector('.day-head'),b=days[i].querySelector('.day-body');
+    if(h&&typeof d.header==='string')h.innerHTML=d.header;
+    if(b&&typeof d.body==='string')b.innerHTML=d.body;
+   });
+  }catch(e){}
+ }
+ function openEditor(event,dayIndex){
+  target={event,dayIndex};
+  const time=event.querySelector('.time')?.innerText.trim()||'';
+  const title=event.querySelector('h4')?.innerText.trim()||'';
+  const desc=event.querySelector('p')?.innerText.trim()||'';
+  document.getElementById('editTime').value=time;
+  document.getElementById('editTitle').value=title;
+  document.getElementById('editDesc').value=desc;
+  document.getElementById('editHeading').textContent='編輯行程';
+  dialog.showModal();
+ }
+ function decorate(){
+  days.forEach((day,di)=>{
+   const body=day.querySelector('.day-body');if(!body)return;
+   [...body.querySelectorAll('.event')].forEach(ev=>{
+    if(ev.dataset.editable==='yes')return;
+    ev.dataset.editable='yes';
+    const tools=document.createElement('div');tools.className='itin-tools';
+    const edit=document.createElement('button');edit.className='itin-btn';edit.textContent='✏️';edit.title='編輯行程';edit.setAttribute('aria-label','編輯行程');
+    edit.addEventListener('click',()=>openEditor(ev,di));
+    const del=document.createElement('button');del.className='itin-btn danger';del.textContent='🗑️';del.title='刪除此行程';del.setAttribute('aria-label','刪除此行程');
+    del.addEventListener('click',()=>{if(confirm('確定刪除此行程？')){ev.remove();save();}});
+    const mapBtn=document.createElement('button');mapBtn.className='itin-btn';mapBtn.textContent='📍';mapBtn.title='開啟地圖';mapBtn.setAttribute('aria-label','開啟地圖');
+    mapBtn.addEventListener('click',()=>showEventMap(ev));
+    const ticketBtn=document.createElement('button');ticketBtn.className='itin-btn';ticketBtn.textContent='🎫';ticketBtn.title='上傳車票或 PDF';ticketBtn.setAttribute('aria-label','上傳車票或 PDF');
+    ticketBtn.addEventListener('click',()=>chooseTicket(ev));
+    if(!ev.dataset.ticketKey)ev.dataset.ticketKey='ticket-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);
+    tools.append(edit,mapBtn,ticketBtn,del);
+    const content=ev.children[1];if(content)content.append(tools);else ev.append(tools);
+
+   });
+   if(!body.querySelector('.add-event-wrap')){
+    const wrap=document.createElement('div');wrap.className='add-event-wrap';
+    const add=document.createElement('button');add.className='itin-btn';add.textContent='＋ 新增行程 🌿';
+    add.addEventListener('click',()=>{
+     const ev=document.createElement('div');ev.className='event';
+     ev.innerHTML='<div class="time">待安排</div><div><h4>新行程</h4><p>點選編輯補充內容。</p></div>';
+     const firstHotel=body.querySelector('.hotel');
+     body.insertBefore(ev,firstHotel||wrap);decorate();save();openEditor(ev,di);
+    });
+    wrap.append(add);body.append(wrap);
+   }
+  });
+ }
+ form.addEventListener('submit',e=>{
+  e.preventDefault();if(!target)return;
+  const {event}=target;
+  let time=event.querySelector('.time'),title=event.querySelector('h4'),desc=event.querySelector('p');
+  if(!time){time=document.createElement('div');time.className='time';event.prepend(time);}
+  if(!title){title=document.createElement('h4');event.append(title);}
+  if(!desc){desc=document.createElement('p');event.append(desc);}
+  time.textContent=document.getElementById('editTime').value.trim()||'時間未定';
+  title.textContent=document.getElementById('editTitle').value.trim();
+  desc.textContent=document.getElementById('editDesc').value.trim();
+  dialog.close();save();decorate();
+ });
+ document.getElementById('cancelEdit').addEventListener('click',()=>dialog.close());
+ document.getElementById('resetItinerary').addEventListener('click',()=>{
+  if(confirm('確定清除這台裝置儲存的修改，還原成網站原始行程？')){
+   localStorage.removeItem(STORE);location.reload();
+  }
+ });
+ restore();decorate();
+})();
+</script>
+
+
+<style>
+.itin-btn.has-ticket{background:#e9eddf;border-color:#cbd4bd;color:#526747}
+.travel-modal{display:none;position:fixed;inset:0;z-index:9999;background:#10251fbb;align-items:center;justify-content:center;padding:14px}
+.travel-modal.open{display:flex}.travel-modal-card{background:#fffefa;border-radius:17px;width:min(850px,100%);max-height:92vh;overflow:auto;padding:16px;box-shadow:0 20px 70px #0005}
+.travel-modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.travel-modal-head h3{margin:0;font-size:18px}.travel-modal-head button{border:1px solid #ddd;border-radius:9px;background:white;padding:7px 12px;cursor:pointer}
+#eventMapFrame{width:100%;height:min(65vh,520px);border:0;border-radius:12px}
+#ticketPdfFrame{width:100%;height:70vh;border:1px solid #ddd;border-radius:10px}
+.ticket-note{font-size:12px;color:#718078;margin:9px 0 0}
+@media print{.travel-modal{display:none!important}}
+</style>
+<div class="travel-modal" id="eventMapModal" role="dialog" aria-modal="true">
+ <div class="travel-modal-card"><div class="travel-modal-head"><h3 id="eventMapTitle">行程地圖</h3><button onclick="closeTravelModal('eventMapModal')">關閉 ✕</button></div>
+ <iframe id="eventMapFrame" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+ <p class="ticket-note">地圖依行程名稱與備註搜尋；若地點名稱不精確，可先編輯行程名稱再開啟地圖。</p>
+ <a id="eventMapExternal" target="_blank" rel="noopener">在 Google Maps 開啟完整地圖 ↗</a></div>
+</div>
+<div class="travel-modal" id="ticketModal" role="dialog" aria-modal="true">
+ <div class="travel-modal-card"><div class="travel-modal-head"><h3 id="ticketModalTitle">車票／購買證明</h3><button onclick="closeTravelModal('ticketModal')">關閉 ✕</button></div>
+ <iframe id="ticketPdfFrame" title="PDF 預覽"></iframe>
+ <div class="map-links"><a id="ticketDownload" download="ticket-proof.pdf">下載 PDF</a><button class="btn" id="ticketDelete">刪除附件</button></div>
+ <p class="ticket-note">PDF 附件保存在這台裝置的瀏覽器，不會自動上傳到 GitHub，也不會同步到其他裝置。</p></div>
+</div>
+<input type="file" id="ticketFileInput" accept="application/pdf,.pdf" hidden>
+<script>
+(()=>{
+ const DB_NAME='JapanTripTicketDB',STORE='pdfs';let dbPromise;
+ function db(){
+  if(!dbPromise)dbPromise=new Promise((resolve,reject)=>{
+   const req=indexedDB.open(DB_NAME,1);
+   req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains(STORE))req.result.createObjectStore(STORE);};
+   req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+  });return dbPromise;
+ }
+ async function putTicket(key,file){const d=await db();return new Promise((res,rej)=>{const tx=d.transaction(STORE,'readwrite');tx.objectStore(STORE).put(file,key);tx.oncomplete=res;tx.onerror=()=>rej(tx.error);});}
+ async function getTicket(key){const d=await db();return new Promise((res,rej)=>{const r=d.transaction(STORE).objectStore(STORE).get(key);r.onsuccess=()=>res(r.result||null);r.onerror=()=>rej(r.error);});}
+ async function deleteTicket(key){const d=await db();return new Promise((res,rej)=>{const tx=d.transaction(STORE,'readwrite');tx.objectStore(STORE).delete(key);tx.oncomplete=res;tx.onerror=()=>rej(tx.error);});}
+ window.ticketExists=async key=>!!(await getTicket(key));
+ let currentKey=null,currentUrl=null;
+ window.chooseTicket=ev=>{
+  if(!ev.dataset.ticketKey)ev.dataset.ticketKey='ticket-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);
+  currentKey=ev.dataset.ticketKey;const input=document.getElementById('ticketFileInput');
+  input.value='';input.onchange=async()=>{
+   const file=input.files&&input.files[0];if(!file)return;
+   if(file.type!=='application/pdf'&&!file.name.toLowerCase().endsWith('.pdf')){alert('請選擇 PDF 檔案。');return;}
+   if(file.size>25*1024*1024){alert('單一 PDF 請控制在 25 MB 以內。');return;}
+   try{await putTicket(currentKey,file);const btn=ev.querySelector('.has-ticket')||[...ev.querySelectorAll('button')].find(b=>b.textContent.includes('PDF'));if(btn){btn.textContent='查看已上傳 PDF';btn.classList.add('has-ticket');}openTicket(currentKey,ev.querySelector('h4')?.textContent||'車票／購買證明');}
+   catch(e){alert('儲存 PDF 失敗，可能是瀏覽器儲存空間不足。');}
+  };input.click();
+ };
+ async function openTicket(key,title){
+  const file=await getTicket(key);if(!file){alert('找不到這份 PDF，請重新上傳。');return;}
+  if(currentUrl)URL.revokeObjectURL(currentUrl);currentUrl=URL.createObjectURL(file);
+  document.getElementById('ticketModalTitle').textContent=title+'｜PDF';
+  document.getElementById('ticketPdfFrame').src=currentUrl;
+  const a=document.getElementById('ticketDownload');a.href=currentUrl;a.download=(title||'ticket').replace(/[\\/:*?"<>|]/g,'_')+'.pdf';
+  document.getElementById('ticketDelete').onclick=async()=>{if(confirm('確定刪除這份 PDF 附件？')){await deleteTicket(key);closeTravelModal('ticketModal');document.querySelectorAll('.has-ticket').forEach(b=>{b.textContent='🎫';b.title='上傳車票或 PDF';b.setAttribute('aria-label','上傳車票或 PDF');b.classList.remove('has-ticket');});}};
+  document.getElementById('ticketModal').classList.add('open');
+ }
+ window.showEventMap=ev=>{
+  const title=ev.querySelector('h4')?.textContent||'',desc=ev.querySelector('p')?.textContent||'';
+  const query=(title+' '+desc).trim()+' Japan';
+  const q=encodeURIComponent(query);
+  document.getElementById('eventMapTitle').textContent=title+'｜地圖';
+  document.getElementById('eventMapFrame').src='https://www.google.com/maps?q='+q+'&output=embed';
+  document.getElementById('eventMapExternal').href='https://www.google.com/maps/search/?api=1&query='+q;
+  document.getElementById('eventMapModal').classList.add('open');
+ };
+ window.closeTravelModal=id=>{
+  document.getElementById(id).classList.remove('open');
+  if(id==='ticketModal'){document.getElementById('ticketPdfFrame').src='about:blank';if(currentUrl){URL.revokeObjectURL(currentUrl);currentUrl=null;}}
+  if(id==='eventMapModal')document.getElementById('eventMapFrame').src='about:blank';
+ };
+ document.getElementById('ticketFileInput').addEventListener('dblclick',()=>{});
+ // Restore visible attachment state on page load.
+ document.querySelectorAll('article.day .event').forEach(async ev=>{
+  const key=ev.dataset.ticketKey;if(key&&await window.ticketExists(key)){
+   const b=[...ev.querySelectorAll('button')].find(x=>x.textContent.includes('PDF'));
+   if(b){b.textContent='📄';b.title='查看已上傳 PDF';b.setAttribute('aria-label','查看已上傳 PDF');b.classList.add('has-ticket');b.onclick=()=>openTicket(key,ev.querySelector('h4')?.textContent||'車票');}
+  }
+ });
+ // Replace upload button behavior with view-existing-or-upload behavior after page initialization.
+ document.addEventListener('click',async e=>{
+  const b=e.target.closest('.itin-tools button');if(!b)return;
+  const ev=b.closest('.event');if(!ev)return;
+  const label=(b.getAttribute('aria-label')||b.title||b.textContent).trim();
+  if(label.includes('地圖')){e.preventDefault();e.stopImmediatePropagation();window.showEventMap(ev);return;}
+  if(label.includes('PDF')||label.includes('車票')){
+   e.preventDefault();e.stopImmediatePropagation();
+   if(b.classList.contains('has-ticket'))await openTicket(ev.dataset.ticketKey,ev.querySelector('h4')?.textContent||'車票');
+   else window.chooseTicket(ev);
+  }
+ },true);
+})();
+</script>
+
 </body></html>
