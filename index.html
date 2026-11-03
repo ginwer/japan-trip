@@ -134,6 +134,113 @@ body{background:radial-gradient(ellipse at 10% 8%,#f4dfc7 0,transparent 30%),lin
 <p>從中部國際機場出發，走訪四日市、高山與白川鄉。</p>
 <div class="hero-meta"><span class="pill">2026.11.18 – 11.25</span><span class="pill">8 天 7 夜</span><span class="pill">愛知・三重・岐阜</span></div>
 </div></header>
+
+<style>
+.publish-strip{display:flex;justify-content:flex-end;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 15px}
+.publish-main{border:0;border-radius:999px;padding:10px 17px;background:linear-gradient(120deg,#9a593a,#64734f);color:white;font:600 13px system-ui;box-shadow:0 5px 14px #70482b22;cursor:pointer}
+.publish-main:active{transform:scale(.98)}
+.publish-caption{font-size:11px;color:#88776a}
+#githubPublishDialog{border:0;border-radius:18px;padding:0;width:min(480px,calc(100% - 24px));box-shadow:0 20px 70px #14251e55}
+#githubPublishDialog::backdrop{background:#201810a8}
+.publish-form{padding:20px;background:#fffaf2;color:#392b25}
+.publish-form h3{margin:0 0 5px;font-size:19px}.publish-form p{font-size:12px;color:#88776a;line-height:1.6;margin:5px 0 14px}
+.publish-form label{display:block;font-size:12px;font-weight:700;margin:10px 0 5px}
+.publish-form input{width:100%;padding:10px 11px;border:1px solid #e5d6c5;border-radius:9px;background:#fffdf9;font:14px system-ui;box-sizing:border-box}
+.publish-form .publish-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.publish-form button{border:1px solid #e5d2bd;border-radius:9px;padding:9px 13px;background:#f7eee3;color:#805239;font:13px system-ui;cursor:pointer}
+.publish-form button.primary{background:#526747;color:#fff;border-color:#526747}
+#publishStatus{font-size:12px;margin-top:12px;line-height:1.5;white-space:pre-wrap}
+@media(max-width:600px){.publish-strip{justify-content:stretch}.publish-main{width:100%;padding:12px}.publish-caption{text-align:center;width:100%}}
+</style>
+<div class="wrap" style="padding-top:16px">
+ <div class="publish-strip">
+  <span class="publish-caption">修改行程後，將最新版本發布到你的網站</span>
+  <button class="publish-main" id="openGithubPublish">🚀 一鍵發布到 GitHub</button>
+ </div>
+</div>
+<dialog id="githubPublishDialog">
+ <form class="publish-form" id="githubPublishForm">
+  <h3>🚀 發布旅行網站</h3>
+  <p>填入 GitHub Repository 與 Personal Access Token，即可直接更新網站根目錄的 index.html。Token 只在這次操作時使用，不會寫入 HTML 或保存到瀏覽器。</p>
+  <label for="ghOwner">GitHub 帳號（Owner）</label><input id="ghOwner" value="ginwer" autocomplete="off" required>
+  <label for="ghRepo">Repository 名稱</label><input id="ghRepo" value="japan-trip" autocomplete="off" required>
+  <label for="ghBranch">Branch</label><input id="ghBranch" value="main" required>
+  <label for="ghToken">Personal Access Token</label><input id="ghToken" type="password" placeholder="github_pat_..." autocomplete="off" required>
+  <div class="publish-actions"><button type="button" id="cancelGithubPublish">取消</button><button class="primary" id="doGithubPublish" type="submit">發布並覆蓋 index.html</button></div>
+  <div id="publishStatus" role="status"></div>
+  <p>需要對該 Repository 有 Contents: Read and write 權限。發布成功後，GitHub Pages 會自動重新部署。PDF 車票附件仍保存在本機，不會隨 index.html 一起上傳。</p>
+ </form>
+</dialog>
+<script>
+(()=>{
+ const dialog=document.getElementById('githubPublishDialog');
+ const owner=document.getElementById('ghOwner'),repo=document.getElementById('ghRepo'),branch=document.getElementById('ghBranch'),token=document.getElementById('ghToken');
+ const status=document.getElementById('publishStatus'),submit=document.getElementById('doGithubPublish');
+ const configKey='jpTripGithubPublishConfig';
+ try{const c=JSON.parse(localStorage.getItem(configKey)||'{}');if(c.owner)owner.value=c.owner;if(c.repo)repo.value=c.repo;if(c.branch)branch.value=c.branch;}catch(e){}
+ document.getElementById('openGithubPublish').addEventListener('click',()=>{status.textContent='';dialog.showModal();});
+ document.getElementById('cancelGithubPublish').addEventListener('click',()=>{token.value='';dialog.close();});
+ function utf8Base64(str){
+  const bytes=new TextEncoder().encode(str);let binary='';const chunk=0x8000;
+  for(let i=0;i<bytes.length;i+=chunk)binary+=String.fromCharCode(...bytes.subarray(i,i+chunk));
+  return btoa(binary);
+ }
+ async function makePublishHtml(o,r,b,t,headers,status){
+  const clone=document.documentElement.cloneNode(true);
+  clone.querySelectorAll('.itin-tools,.add-event-wrap').forEach(el=>el.remove());
+  clone.querySelectorAll('[data-editable]').forEach(el=>el.removeAttribute('data-editable'));
+  clone.querySelectorAll('input[type="password"]').forEach(el=>el.value='');
+  const imageEls=[...clone.querySelectorAll('img[data-github-image-key]')];
+  for(let i=0;i<imageEls.length;i++){
+   const img=imageEls[i],key=img.dataset.githubImageKey;
+   status.textContent=`正在上傳行程照片 ${i+1}/${imageEls.length}…`;
+   const blob=await window.getTripImage(key);
+   if(!blob)throw new Error('找不到行程照片，請重新上傳後再發布。');
+   const ext=(blob.type.split('/')[1]||'jpg').replace('jpeg','jpg').replace(/[^a-z0-9]/gi,'')||'jpg';
+   const path=`images/${key}.${ext}`;
+   const api=`https://api.github.com/repos/${encodeURIComponent(o)}/${encodeURIComponent(r)}/contents/${path}`;
+   const get=await fetch(`${api}?ref=${encodeURIComponent(b)}`,{headers});
+   let sha=null;
+   if(get.ok)sha=(await get.json()).sha;
+   else if(get.status!==404){const e=await get.json().catch(()=>({}));throw new Error(e.message||'讀取圖片檔案失敗');}
+   const bytes=new Uint8Array(await blob.arrayBuffer());let binary='';
+   for(let j=0;j<bytes.length;j+=0x8000)binary+=String.fromCharCode(...bytes.subarray(j,j+0x8000));
+   const payload={message:'Upload trip photo',content:btoa(binary),branch:b};if(sha)payload.sha=sha;
+   const put=await fetch(api,{method:'PUT',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+   if(!put.ok){const e=await put.json().catch(()=>({}));throw new Error(e.message||'圖片上傳 GitHub 失敗');}
+   img.src='./'+path;img.removeAttribute('data-github-image-key');
+  }
+  return '<!DOCTYPE html>\\n'+clone.outerHTML;
+ }
+ document.getElementById('githubPublishForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const o=owner.value.trim(),r=repo.value.trim(),b=branch.value.trim(),t=token.value.trim();
+  if(!o||!r||!b||!t){status.textContent='請完整填寫帳號、Repository、Branch 與 Token。';return;}
+  submit.disabled=true;submit.textContent='發布中…';status.textContent='正在讀取 GitHub 上的 index.html…';
+  try{
+   localStorage.setItem(configKey,JSON.stringify({owner:o,repo:r,branch:b}));
+   const api=`https://api.github.com/repos/${encodeURIComponent(o)}/${encodeURIComponent(r)}/contents/index.html`;
+   const headers={'Accept':'application/vnd.github+json','Authorization':`Bearer ${t}`,'X-GitHub-Api-Version':'2022-11-28'};
+   let sha=null;
+   const get=await fetch(`${api}?ref=${encodeURIComponent(b)}`,{headers});
+   if(get.ok){const existing=await get.json();sha=existing.sha;}
+   else if(get.status!==404){const err=await get.json().catch(()=>({}));throw new Error(err.message||`讀取 GitHub 失敗（HTTP ${get.status}）`);}
+   status.textContent='已取得版本資訊，正在準備行程與圖片…';
+   const html=await makePublishHtml(o,r,b,t,headers,status);\n   const content=utf8Base64(html);
+   const payload={message:'Update travel itinerary website',content,branch:b};
+   if(sha)payload.sha=sha;
+   const put=await fetch(api,{method:'PUT',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+   const result=await put.json().catch(()=>({}));
+   if(!put.ok)throw new Error(result.message||`上傳失敗（HTTP ${put.status}）`);
+   status.textContent='✅ 發布成功！已更新 '+o+'/'+r+' 的 index.html。\nGitHub Pages 正在重新部署，通常稍等片刻即可看到新版網站。';
+   token.value='';
+  }catch(err){
+   status.textContent='❌ 發布未成功：'+err.message+'\n請檢查 Repository 名稱、Branch，以及 Token 是否具有 Contents: Read and write 權限。';
+  }finally{submit.disabled=false;submit.textContent='發布並覆蓋 index.html';}
+ });
+})();
+</script>
+
 <main class="wrap">
 <section class="overview">
 <div class="stat"><b>8 天</b><span>旅行期間</span></div><div class="stat"><b>3 個區域</b><span>四日市・高山・名古屋</span></div><div class="stat"><b>¥14,000</b><span>已註記巴士票價合計</span></div>
@@ -306,6 +413,7 @@ boxes.forEach(x=>x.addEventListener('change',update));update();
   }));
  }
  function save(){localStorage.setItem(STORE,JSON.stringify(readDays()));}
+ window.saveEditableItinerary=save;
  function restore(){
   try{
    const data=JSON.parse(localStorage.getItem(STORE)||'null');
@@ -342,8 +450,10 @@ boxes.forEach(x=>x.addEventListener('change',update));update();
     mapBtn.addEventListener('click',()=>showEventMap(ev));
     const ticketBtn=document.createElement('button');ticketBtn.className='itin-btn';ticketBtn.textContent='🎫';ticketBtn.title='上傳車票或 PDF';ticketBtn.setAttribute('aria-label','上傳車票或 PDF');
     ticketBtn.addEventListener('click',()=>chooseTicket(ev));
+    const imageBtn=document.createElement('button');imageBtn.className='itin-btn';imageBtn.textContent='🖼️';imageBtn.title='上傳行程照片';imageBtn.setAttribute('aria-label','上傳行程照片');
+    imageBtn.addEventListener('click',()=>window.chooseEventImages(ev));
     if(!ev.dataset.ticketKey)ev.dataset.ticketKey='ticket-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);
-    tools.append(edit,mapBtn,ticketBtn,del);
+    tools.append(edit,mapBtn,ticketBtn,imageBtn,del);
     const content=ev.children[1];if(content)content.append(tools);else ev.append(tools);
 
    });
@@ -406,7 +516,7 @@ boxes.forEach(x=>x.addEventListener('change',update));update();
  <div class="map-links"><a id="ticketDownload" download="ticket-proof.pdf">下載 PDF</a><button class="btn" id="ticketDelete">刪除附件</button></div>
  <p class="ticket-note">PDF 附件保存在這台裝置的瀏覽器，不會自動上傳到 GitHub，也不會同步到其他裝置。</p></div>
 </div>
-<input type="file" id="ticketFileInput" accept="application/pdf,.pdf" hidden>
+<input type="file" id="ticketFileInput" accept="application/pdf,.pdf" hidden><input type="file" id="eventImageInput" accept="image/*" multiple hidden>
 <script>
 (()=>{
  const DB_NAME='JapanTripTicketDB',STORE='pdfs';let dbPromise;
@@ -421,6 +531,31 @@ boxes.forEach(x=>x.addEventListener('change',update));update();
  async function getTicket(key){const d=await db();return new Promise((res,rej)=>{const r=d.transaction(STORE).objectStore(STORE).get(key);r.onsuccess=()=>res(r.result||null);r.onerror=()=>rej(r.error);});}
  async function deleteTicket(key){const d=await db();return new Promise((res,rej)=>{const tx=d.transaction(STORE,'readwrite');tx.objectStore(STORE).delete(key);tx.oncomplete=res;tx.onerror=()=>rej(tx.error);});}
  window.ticketExists=async key=>!!(await getTicket(key));
+ window.chooseEventImages=ev=>{
+  const input=document.getElementById('eventImageInput');input.value='';
+  input.onchange=async()=>{
+   const files=[...(input.files||[])];if(!files.length)return;
+   const valid=files.filter(f=>f.type.startsWith('image/'));
+   if(!valid.length){alert('請選擇圖片檔案。');return;}
+   if(valid.some(f=>f.size>12*1024*1024)){alert('單張圖片請小於 12 MB。');return;}
+   try{
+    if(!ev.dataset.imageGroupKey)ev.dataset.imageGroupKey='tripimg-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
+    for(const file of valid){
+     const key=ev.dataset.imageGroupKey+'-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
+     await putTicket('image:'+key,file);
+     const url=URL.createObjectURL(file);
+     const gallery=ev.querySelector('.event-photo-gallery')||document.createElement('div');
+     gallery.className='event-photo-gallery';
+     if(!gallery.isConnected){gallery.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin-top:10px';ev.children[1].append(gallery);}
+     const img=document.createElement('img');img.src=url;img.dataset.githubImageKey=key;img.alt='行程照片';
+     img.style.cssText='width: min(100%,220px);max-height:180px;object-fit:cover;border-radius:12px;border:1px solid #eadbca';
+     gallery.append(img);
+    }
+    if(typeof window.saveEditableItinerary==='function')window.saveEditableItinerary();
+   }catch(e){alert('圖片儲存失敗，請確認手機儲存空間。');}
+  };input.click();
+ };
+ window.getTripImage=key=>getTicket('image:'+key);
  let currentKey=null,currentUrl=null;
  window.chooseTicket=ev=>{
   if(!ev.dataset.ticketKey)ev.dataset.ticketKey='ticket-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);
@@ -429,7 +564,7 @@ boxes.forEach(x=>x.addEventListener('change',update));update();
    const file=input.files&&input.files[0];if(!file)return;
    if(file.type!=='application/pdf'&&!file.name.toLowerCase().endsWith('.pdf')){alert('請選擇 PDF 檔案。');return;}
    if(file.size>25*1024*1024){alert('單一 PDF 請控制在 25 MB 以內。');return;}
-   try{await putTicket(currentKey,file);const btn=ev.querySelector('.has-ticket')||[...ev.querySelectorAll('button')].find(b=>b.textContent.includes('PDF'));if(btn){btn.textContent='查看已上傳 PDF';btn.classList.add('has-ticket');}openTicket(currentKey,ev.querySelector('h4')?.textContent||'車票／購買證明');}
+   try{await putTicket(currentKey,file);const btn=ev.querySelector('.has-ticket')||[...ev.querySelectorAll('button')].find(b=>(b.getAttribute('aria-label')||'').includes('車票')||(b.title||'').includes('車票'));if(btn){btn.textContent='📄';btn.title='查看已上傳 PDF';btn.setAttribute('aria-label','查看已上傳 PDF');btn.classList.add('has-ticket');}openTicket(currentKey,ev.querySelector('h4')?.textContent||'車票／購買證明');}
    catch(e){alert('儲存 PDF 失敗，可能是瀏覽器儲存空間不足。');}
   };input.click();
  };
@@ -459,6 +594,8 @@ boxes.forEach(x=>x.addEventListener('change',update));update();
  document.getElementById('ticketFileInput').addEventListener('dblclick',()=>{});
  // Restore visible attachment state on page load.
  document.querySelectorAll('article.day .event').forEach(async ev=>{
+  const images=[...ev.querySelectorAll('img[data-github-image-key]')];
+  for(const img of images){try{const blob=await window.getTripImage(img.dataset.githubImageKey);if(blob)img.src=URL.createObjectURL(blob);}catch(e){}}
   const key=ev.dataset.ticketKey;if(key&&await window.ticketExists(key)){
    const b=[...ev.querySelectorAll('button')].find(x=>x.textContent.includes('PDF'));
    if(b){b.textContent='📄';b.title='查看已上傳 PDF';b.setAttribute('aria-label','查看已上傳 PDF');b.classList.add('has-ticket');b.onclick=()=>openTicket(key,ev.querySelector('h4')?.textContent||'車票');}
